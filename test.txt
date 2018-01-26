@@ -1,0 +1,31 @@
+function fibonacci(i) {
+	if(i<2){
+		return 1;
+	}
+    return fibonacci(i-1) + fibonacci(i-2);
+}
+
+function change(m1){
+	setmap(m1,1,1);
+	setmap(m1,2,3);
+	return 0;
+}
+
+function main()
+{
+	printf("start");
+	i=input();
+	printf("i=%d",i);
+	while(i<=10){
+		printf("ans=%d",fibonacci(i));
+		i = i + 1;
+	}
+	m=map;
+	setmap(m,1,2);
+	printf("before change map:%d",getmap(m,1));
+	printf("before change map length is:%d",maplen(m));
+	change(m);
+	printf("after change map:%d",getmap(m,1));
+	printf("after change map length is:%d",maplen(m));
+    return 0;
+}
