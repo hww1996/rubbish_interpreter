@@ -695,7 +695,7 @@ def cal(x,stop,env,ast):
         if not isinstance(env[x[1]],dict):
             print("error.use the variable is not the map.")
             exit(-1)
-        env[x[1]][x[2]]=cal(x[3],stop,env,ast)
+        env[x[1]][cal(x[2],stop,env,ast)]=cal(x[3],stop,env,ast)
         return None
     elif x[0]=="getmap":
         if(len(x)!=3):
@@ -707,7 +707,7 @@ def cal(x,stop,env,ast):
         if not isinstance(env[x[1]],dict):
             print("error.use the variable is not the map.")
             exit(-1)
-        return env[x[1]][x[2]]
+        return env[x[1]][cal(x[2],stop,env,ast)]
     elif x[0]=="maplen":
         if(len(x)!=2):
             print("error.the length of the args of the setmap function is not 1.")
@@ -803,11 +803,12 @@ def cal(x,stop,env,ast):
     return None
 
 if __name__=="__main__":
-    s=open("C:\\Users\\Administrator\\Desktop\\code\\test.txt").read()
+    s=open("C:\\Users\\Administrator\\Desktop\\code\\quicksort.txt").read()
     ast=Parse(s).analysis()
     if ast.get("main")==None:
         print("error.do not have the main function.")
         exit(-1)
-    cal(ast["main"].code,[False],{},ast)
+    exit_code=cal(ast["main"].code,[False],{},ast)
+    print("exit with code %d" %(exit_code))
 
 
