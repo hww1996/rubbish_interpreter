@@ -1,5 +1,4 @@
 # rubbish_interpreter
-* * *
 
 这个是编译原理的课设的一个解释器。
 
