@@ -6,7 +6,7 @@
 
 语法分析阶段我是自己参考将中缀式转化为后缀式这种方法，然后在将后缀式转化为前缀式，这样就得到了类似lisp的ast了。（class Parse）
 
-然后就开始解释运行了（function eval）
+然后就开始解释运行了（function cal）
 
 内部放置的函数有printf,input,setmap,getmap,maplen。内置了hash map这个数据结构。
 ***
