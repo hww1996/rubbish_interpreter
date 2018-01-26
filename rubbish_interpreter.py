@@ -192,7 +192,7 @@ class Parse():
         ans={}
         for func in self.func_map:
             if self.func_map[func].pos>0:#judge if is inner_fucntion
-                ans[func]=Func(self.parse(self.func_map[func].pos),func,deepcopy(self.func_map[func].var))
+                ans[func]=Func(self.parse(self.func_map[func].pos,self.tokens),func,deepcopy(self.func_map[func].var))
         return ans
 
     def inner_function(self):
@@ -231,7 +231,7 @@ class Parse():
                 self.func_map[f.function_name]=f
             i+=1
         return
-    def cond_parse(self,pos,tokens):
+    def parse(self,pos,tokens):
         if tokens[pos].token!="{":
             print("error")
             exit(-1)
@@ -284,7 +284,7 @@ class Parse():
                     pos+=1
                 if_body.append(tokens[pos])
                 pos+=1
-                temp.append(self.cond_parse(0,if_body))
+                temp.append(self.parse(0,if_body))
 
                 if tokens[pos].token=="else":
                     pos+=1
@@ -307,7 +307,7 @@ class Parse():
                         pos+=1
                     else_body.append(tokens[pos])
                     pos+=1
-                    temp.append(self.cond_parse(0,else_body))
+                    temp.append(self.parse(0,else_body))
 ####################################################################################
             elif tokens[pos].token=="while":
                 temp.append("while")
@@ -353,7 +353,7 @@ class Parse():
                     pos+=1
                 while_body.append(tokens[pos])
                 pos+=1
-                temp.append(self.cond_parse(0,while_body))
+                temp.append(self.parse(0,while_body))
 ####################################################################################
             else:
                 while tokens[pos].token!=";":
@@ -364,145 +364,6 @@ class Parse():
                 continue
             ans.append(deepcopy(temp))
         return ans
-
-
-
-
-
-    def parse(self,pos):
-        if self.tokens[pos].token!="{":
-            print("error")
-            exit(-1)
-        ans=[]
-        ans.append("begin")
-        pos+=1
-        while self.tokens[pos].token!="}":
-            temp=[]
-            if self.tokens[pos].token=="if":
-                temp.append("if")
-                pos+=1
-                if_cond=[]
-                if self.tokens[pos].token!="(":
-                    print("error.if don't match the (")
-                    exit(-1)
-                pos+=1
-                brak_count=0
-                while True:
-                    if self.tokens[pos].token==")":
-                        if brak_count==0:
-                            break
-                    if self.tokens[pos].token=="(":
-                        brak_count+=1
-                    if self.tokens[pos].token==")":
-                        brak_count-=1
-                    if_cond.append(self.tokens[pos])
-                    pos+=1
-                pos+=1
-                if len(if_cond)==0:
-                    print("error.not condition.")
-                    exit(-1)
-                temp.append(self.deal_statance(if_cond))
-
-                if_body=[]
-                if self.tokens[pos].token!="{":
-                    print("error.after if condition withou token {")
-                    exit(-1)
-                if_body.append(self.tokens[pos])
-                pos+=1
-                brak_count=0
-                while True:
-                    if self.tokens[pos].token=="}":
-                        if brak_count==0:
-                            break
-                    if self.tokens[pos].token=="{":
-                        brak_count+=1
-                    if self.tokens[pos].token=="}":
-                        brak_count-=1
-                    if_body.append(self.tokens[pos])
-                    pos+=1
-                if_body.append(self.tokens[pos])
-                pos+=1
-                temp.append(self.cond_parse(0,if_body))
-
-                if self.tokens[pos].token=="else":
-                    pos+=1
-                    if self.tokens[pos].token!="{":
-                        print("error.after if condition withou token {")
-                        exit(-1)
-                    else_body=[]
-                    else_body.append(self.tokens[pos])
-                    pos+=1
-                    brak_count=0
-                    while True:
-                        if self.tokens[pos].token=="}":
-                            if brak_count==0:
-                                break
-                        if self.tokens[pos].token=="{":
-                            brak_count+=1
-                        if self.tokens[pos].token=="}":
-                            brak_count-=1
-                        else_body.append(self.tokens[pos])
-                        pos+=1
-                    else_body.append(self.tokens[pos])
-                    pos+=1
-                    temp.append(self.cond_parse(0,else_body))
-####################################################################################
-            elif self.tokens[pos].token=="while":
-                temp.append("while")
-                pos+=1
-                while_cond=[]
-                if self.tokens[pos].token!="(":
-                    print("error.while don't match the (")
-                    exit(-1)
-                pos+=1
-                brak_count=0
-                while True:
-                    if self.tokens[pos].token==")":
-                        if brak_count==0:
-                            break
-                    if self.tokens[pos].token=="(":
-                        brak_count+=1
-                    if self.tokens[pos].token==")":
-                        brak_count-=1
-                    while_cond.append(self.tokens[pos])
-                    pos+=1
-                pos+=1
-                if len(while_cond)==0:
-                    print("error.not condition.")
-                    exit(-1)
-                temp.append(self.deal_statance(while_cond))
-
-                while_body=[]
-                if self.tokens[pos].token!="{":
-                    print("error.after while condition withou token {")
-                    exit(-1)
-                while_body.append(self.tokens[pos])
-                pos+=1
-                brak_count=0
-                while True:
-                    if self.tokens[pos].token=="}":
-                        if brak_count==0:
-                            break
-                    if self.tokens[pos].token=="{":
-                        brak_count+=1
-                    if self.tokens[pos].token=="}":
-                        brak_count-=1
-                    while_body.append(self.tokens[pos])
-                    pos+=1
-                while_body.append(self.tokens[pos])
-                pos+=1
-                temp.append(self.cond_parse(0,while_body))
-####################################################################################
-            else:
-                while self.tokens[pos].token!=";":
-                    temp.append(self.tokens[pos])
-                    pos+=1
-                pos+=1
-                ans.append(self.deal_statance(temp))
-                continue
-            ans.append(deepcopy(temp))
-        return ans
-
     def deal_statance(self,statence):
         if len(statence)==0:
             return None
@@ -803,12 +664,10 @@ def cal(x,stop,env,ast):
     return None
 
 if __name__=="__main__":
-    s=open("C:\\Users\\Administrator\\Desktop\\code\\quicksort.txt").read()
+    s=open("C:\\Users\\Administrator\\Desktop\\code\\test.txt").read()
     ast=Parse(s).analysis()
     if ast.get("main")==None:
         print("error.do not have the main function.")
         exit(-1)
     exit_code=cal(ast["main"].code,[False],{},ast)
     print("exit with code %d" %(exit_code))
-
-

@@ -2,7 +2,7 @@ function fibonacci(i) {
 	if(i<2){
 		return 1;
 	}
-    return fibonacci(i-1) + fibonacci(i-2);
+	return fibonacci(i-1) + fibonacci(i-2);
 }
 
 function change(m1){
@@ -27,5 +27,5 @@ function main()
 	change(m);
 	printf("after change map:%d",getmap(m,1));
 	printf("after change map length is:%d",maplen(m));
-    return 0;
+	return 0;
 }

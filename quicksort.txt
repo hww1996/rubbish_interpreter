@@ -1,7 +1,7 @@
 function quicksort(m1,start,end){
 	i=start;
 	j=end;
-	if(i>j){
+	if(i>=j){
 		return 0;
 	}
 	first=1;
