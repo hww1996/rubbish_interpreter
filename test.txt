@@ -13,19 +13,19 @@ function change(m1){
 
 function main()
 {
-	printf("start");
+	printf("start\n");
 	i=input();
-	printf("i=%d",i);
+	printf("i=%d\n",i);
 	while(i<=10){
-		printf("ans=%d",fibonacci(i));
+		printf("ans=%d\n",fibonacci(i));
 		i = i + 1;
 	}
 	m=map;
 	setmap(m,1,2);
-	printf("before change map:%d",getmap(m,1));
-	printf("before change map length is:%d",maplen(m));
+	printf("before change map:%d\n",getmap(m,1));
+	printf("before change map length is:%d\n",maplen(m));
 	change(m);
-	printf("after change map:%d",getmap(m,1));
-	printf("after change map length is:%d",maplen(m));
+	printf("after change map:%d\n",getmap(m,1));
+	printf("after change map length is:%d\n",maplen(m));
 	return 0;
 }

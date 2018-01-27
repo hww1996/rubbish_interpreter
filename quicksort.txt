@@ -54,14 +54,14 @@ function main()
 	setmap(m,19,77);
 	i=0;
 	while(i<20){
-		printf("%d",getmap(m,i));
+		printf("%d\n",getmap(m,i));
 		i=i+1;
 	}
-	printf("-------------");
+	printf("-------------\n");
 	quicksort(m,0,maplen(m)-1);
 	i=0;
 	while(i<20){
-		printf("%d",getmap(m,i));
+		printf("%d\n",getmap(m,i));
 		i=i+1;
 	}
 	return 0;

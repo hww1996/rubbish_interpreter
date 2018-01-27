@@ -1,0 +1,13 @@
+function main(){
+	m=map;
+	setmap(m,"test",1);
+	printf("%d\n",getmap(m,"test"));
+	tt="test";
+	printf("%d\n",getmap(m,tt));
+	printf("-------------------------\n");
+	pt="ptt";
+	setmap(m,pt,33);
+	printf("%d\n",getmap(m,pt));
+	printf("%d\n",getmap(m,"ptt"));
+	return 0;
+}

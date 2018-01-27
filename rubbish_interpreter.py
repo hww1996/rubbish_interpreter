@@ -1,6 +1,8 @@
 __author__ = 'Administrator'
 
 from copy import deepcopy
+import sys
+import json
 
 class lex_type:
     '''
@@ -167,13 +169,20 @@ class Function():
             print("dup use the id")
             exit(-1)
         self.var.append(var)
-class Func():
+class RSFunc():
     def __init__(self,code,name,var):
         self.code=code
         self.name=name
         self.var=var
     def __str__(self):
         return str(self.code)
+    def __repr__(self):
+        return self.__str__()
+class RSStr():
+    def __init__(self,val):
+        self.val=json.loads(val)
+    def __str__(self):
+        return "RSStr(%s)" %(self.val)
     def __repr__(self):
         return self.__str__()
 
@@ -192,7 +201,7 @@ class Parse():
         ans={}
         for func in self.func_map:
             if self.func_map[func].pos>0:#judge if is inner_fucntion
-                ans[func]=Func(self.parse(self.func_map[func].pos,self.tokens),func,deepcopy(self.func_map[func].var))
+                ans[func]=RSFunc(self.parse(self.func_map[func].pos,self.tokens),func,deepcopy(self.func_map[func].var))
         return ans
 
     def inner_function(self):
@@ -210,6 +219,9 @@ class Parse():
 
         map_len_function=Function("maplen",-1)
         self.func_map["maplen"]=map_len_function
+
+        func_function=Function("func",-1)
+        self.func_map["func"]=func_function
         return
     def templateFunctions(self):
         i=0
@@ -370,7 +382,8 @@ class Parse():
         if len(statence)==1:
             if statence[0].type==2:
                 return int(statence[0].token)
-            return statence[0].token
+            elif statence[0].type==3:
+                return RSStr(statence[0].token)
         pos=0
         ans=[]
         while pos<len(statence):
@@ -407,7 +420,7 @@ class Parse():
             elif statence[pos].type==2:
                 ans.append(int(statence[pos].token))
             elif statence[pos].type==3:
-                ans.append(eval(statence[pos].token))
+                ans.append(RSStr(statence[pos].token))
             else:
                 ans.append(statence[pos].token)
             pos+=1
@@ -512,14 +525,18 @@ def cal(x,stop,env,ast):
         print("error.empty ast.")
         exit(-1)
     elif x[0]=="printf":
-        print_str=x[1]
+        if not isinstance(x[1],RSStr):
+            print("the first args of the printf is not a string.")
+            exit(-1)
+        print_temp=cal(x[1],stop,env,ast)
+        print_str=print_temp.val
         print_args=[]
         for i in range(len(x))[2:]:
             print_args.append(cal(x[i],stop,env,ast))
         if len(print_args)>0:
-            print(print_str %tuple(print_args))
+            print(print_str %tuple(print_args),end="")
         else:
-            print(print_str)
+            print(print_str,end="")
     elif x[0]=="input":
         return int(input())
     elif x[0]=="if":
@@ -556,7 +573,16 @@ def cal(x,stop,env,ast):
         if not isinstance(env[x[1]],dict):
             print("error.use the variable is not the map.")
             exit(-1)
-        env[x[1]][cal(x[2],stop,env,ast)]=cal(x[3],stop,env,ast)
+        second_op_temp=cal(x[2],stop,env,ast)
+        second_op=0
+        if isinstance(second_op_temp,RSStr):
+            second_op=second_op_temp.val
+        elif isinstance(second_op_temp,int):
+            second_op=second_op_temp
+        else:
+            print("use hashable key,error.")
+            exit(-1)
+        env[x[1]][second_op]=cal(x[3],stop,env,ast)
         return None
     elif x[0]=="getmap":
         if(len(x)!=3):
@@ -568,7 +594,16 @@ def cal(x,stop,env,ast):
         if not isinstance(env[x[1]],dict):
             print("error.use the variable is not the map.")
             exit(-1)
-        return env[x[1]][cal(x[2],stop,env,ast)]
+        second_op_temp=cal(x[2],stop,env,ast)
+        second_op=0
+        if isinstance(second_op_temp,RSStr):
+            second_op=second_op_temp.val
+        elif isinstance(second_op_temp,int):
+            second_op=second_op_temp
+        else:
+            print("use hashable key,error.")
+            exit(-1)
+        return env[x[1]][second_op]
     elif x[0]=="maplen":
         if(len(x)!=2):
             print("error.the length of the args of the setmap function is not 1.")
@@ -580,6 +615,20 @@ def cal(x,stop,env,ast):
             print("error.use the variable is not the map.")
             exit(-1)
         return len(env[x[1]])
+    elif x[0]=="func":
+        if len(x)!=2:
+            print("error.the length of the args of the func function is not 1")
+        second_op=x[1]
+        if isinstance(x[1],str):
+            second_op=cal(x[1],stop,env,ast)
+        if not isinstance(second_op,RSStr):
+            print("error.the args is not the string")
+            exit(-1)
+        second_op_str=second_op.val
+        if ast.get(second_op_str)==None:
+            print("error.attemp to get the undefine function object.")
+            exit(-1)
+        return ast[second_op_str]
     elif x[0]=="*":
         first_op=cal(x[1],stop,env,ast)
         second_op=cal(x[2],stop,env,ast)
@@ -661,10 +710,21 @@ def cal(x,stop,env,ast):
         for i in range(len(ast[x[0]].var)):
             function_call_env[ast[x[0]].var[i]]=cal(x[i+1],stop,env,ast)
         return cal(ast[x[0]].code,[False],function_call_env,ast)
+    elif env.get(x[0])!=None:
+        if not isinstance(env[x[0]],RSFunc):
+            print("error.the attemp to call the unknow function.")
+            exit(-1)
+        function_call_env={}
+        for i in range(len(env[x[0]].var)):
+            function_call_env[env[x[0]].var[i]]=cal(x[i+1],stop,env,ast)
+        return cal(env[x[0]].code,[False],function_call_env,ast)
     return None
 
 if __name__=="__main__":
-    s=open("C:\\Users\\Administrator\\Desktop\\code\\test.txt").read()
+    if len(sys.argv)<2:
+        print("usage:rubbish_interpreter <RubbishScript-file>")
+        exit(1)
+    s=open(sys.argv[1]).read()
     ast=Parse(s).analysis()
     if ast.get("main")==None:
         print("error.do not have the main function.")
