@@ -1,0 +1,23 @@
+function str_test(s){
+	printf("%s\n",s);
+	i=0;
+	while(i<strlen(s)){
+		printf("%s\n",strindex(s,i));
+		i=i+1;
+	}
+	return 0;
+}
+
+function main(){
+	str_test("Hello world");
+	s="";
+	printf("before the length of s is:%d\n",strlen(s));
+	i=0;
+	while(i<10){
+		s=strappend(s,chr(ord("a")+i));
+		i=i+1;
+	}
+	printf("after the length of s is:%d\n",strlen(s));
+	printf("%s\n",s);
+	return 0;
+}

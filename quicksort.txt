@@ -32,35 +32,35 @@ function quicksort(m1,start,end){
 function main()
 {
 	m=map;
-	setmap(m,0,34);
-	setmap(m,1,14);
-	setmap(m,2,76);
-	setmap(m,3,80);
-	setmap(m,4,72);
-	setmap(m,5,54);
-	setmap(m,6,8);
-	setmap(m,7,36);
-	setmap(m,8,11);
-	setmap(m,9,40);
-	setmap(m,10,28);
-	setmap(m,11,66);
-	setmap(m,12,40);
-	setmap(m,13,43);
-	setmap(m,14,1);
-	setmap(m,15,34);
-	setmap(m,16,14);
-	setmap(m,17,37);
-	setmap(m,18,51);
-	setmap(m,19,77);
+	setmap(m,0,70);
+	setmap(m,1,35);
+	setmap(m,2,53);
+	setmap(m,3,33);
+	setmap(m,4,83);
+	setmap(m,5,3);
+	setmap(m,6,69);
+	setmap(m,7,5);
+	setmap(m,8,3);
+	setmap(m,9,47);
+	setmap(m,10,0);
+	setmap(m,11,34);
+	setmap(m,12,21);
+	setmap(m,13,50);
+	setmap(m,14,42);
+	setmap(m,15,68);
+	setmap(m,16,69);
+	setmap(m,17,24);
+	setmap(m,18,90);
+	setmap(m,19,74);
 	i=0;
-	while(i<20){
+	while(i<maplen(m)){
 		printf("%d\n",getmap(m,i));
 		i=i+1;
 	}
 	printf("-------------\n");
 	quicksort(m,0,maplen(m)-1);
 	i=0;
-	while(i<20){
+	while(i<maplen(m)){
 		printf("%d\n",getmap(m,i));
 		i=i+1;
 	}

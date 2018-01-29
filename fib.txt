@@ -14,18 +14,24 @@ function change(m1){
 function main()
 {
 	printf("start\n");
-	i=input();
+	i=input("num");
 	printf("i=%d\n",i);
-	while(i<=10){
-		printf("ans=%d\n",fibonacci(i));
-		i = i + 1;
+	t=0;
+	while(t<=i){
+		printf("ans=%d\n",fibonacci(t));
+		t = t + 1;
 	}
 	m=map;
 	setmap(m,1,2);
 	printf("before change map:%d\n",getmap(m,1));
 	printf("before change map length is:%d\n",maplen(m));
+	printf("2 index is in map:%d\n",inmap(m,2));
 	change(m);
 	printf("after change map:%d\n",getmap(m,1));
 	printf("after change map length is:%d\n",maplen(m));
+	printf("after change 2 index is in map:%d\n",inmap(m,2));
+	mapremove(m,1);
+	printf("after remove map length is:%d\n",maplen(m));
+	printf("after remove 1 index in map:%d\n",inmap(m,1));
 	return 0;
 }

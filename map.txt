@@ -8,6 +8,6 @@ function main(){
 	pt="ptt";
 	setmap(m,pt,33);
 	printf("%d\n",getmap(m,pt));
-	printf("%d\n",getmap(m,"ptt"));
+	printf("%d\n",getmap(m,"ptt"));//ok
 	return 0;
 }

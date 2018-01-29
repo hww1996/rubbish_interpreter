@@ -1,0 +1,15 @@
+function main(){
+	i=0;
+	printf("before to string i:%s\n",type(i));
+	i=str(i);
+	printf("after to string i:%s\n",type(i));
+	s="11";
+	printf("before to number s:%s\n",type(s));
+	s=num(s);
+	printf("after to number s:%s\n",type(s));
+	m=map;
+	printf("m type:%s\n",type(m));
+	printf("main function type:%s\n",type(func("main")));
+	printf("type type(s) is:%s\n",type(type(s)));
+	return 0;
+}

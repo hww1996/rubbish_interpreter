@@ -1,0 +1,13 @@
+function fac(i){
+	if(i<1){
+		return 1;
+	}
+	return i*fac(i-1);
+}
+
+function main(){
+	printf("please input a number.\n");
+	a=input("num");
+	printf("(%d!)=%d.\n",a,fac(a));
+	return 0;
+}

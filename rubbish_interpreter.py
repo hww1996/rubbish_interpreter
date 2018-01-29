@@ -180,7 +180,7 @@ class RSFunc():
         return self.__str__()
 class RSStr():
     def __init__(self,val):
-        self.val=json.loads(val)
+        self.val=val
     def __str__(self):
         return "RSStr(%s)" %(self.val)
     def __repr__(self):
@@ -205,23 +205,38 @@ class Parse():
         return ans
 
     def inner_function(self):
-        print_function=Function("printf",-1)
-        self.func_map["printf"]=print_function
+        self.func_map["printf"]=Function("printf",-1)
 
-        input_function=Function("input",-1)
-        self.func_map["input"]=input_function
+        self.func_map["input"]=Function("input",-1)
 
-        set_map_function=Function("setmap",-1)
-        self.func_map["setmap"]=set_map_function
+        self.func_map["setmap"]=Function("setmap",-1)
 
-        get_map_function=Function("getmap",-1)
-        self.func_map["getmap"]=get_map_function
+        self.func_map["getmap"]=Function("getmap",-1)
 
-        map_len_function=Function("maplen",-1)
-        self.func_map["maplen"]=map_len_function
+        self.func_map["maplen"]=Function("maplen",-1)
 
-        func_function=Function("func",-1)
-        self.func_map["func"]=func_function
+        self.func_map["inmap"]=Function("inmap",-1)
+
+        self.func_map["mapremove"]=Function("mapremove",-1)
+
+        self.func_map["func"]=Function("func",-1)
+
+        self.func_map["strappend"]=Function("strappend",-1)
+
+        self.func_map["strindex"]=Function("strindex",-1)
+
+        self.func_map["strlen"]=Function("strlen",-1)
+
+        self.func_map["ord"]=Function("ord",-1)
+
+        self.func_map["chr"]=Function("chr",-1)
+
+        self.func_map["str"]=Function("str",-1)
+
+        self.func_map["num"]=Function("num",-1)
+
+        self.func_map["type"]=Function("type",-1)
+
         return
     def templateFunctions(self):
         i=0
@@ -383,7 +398,7 @@ class Parse():
             if statence[0].type==2:
                 return int(statence[0].token)
             elif statence[0].type==3:
-                return RSStr(statence[0].token)
+                return RSStr(json.loads(statence[0].token))
         pos=0
         ans=[]
         while pos<len(statence):
@@ -420,7 +435,7 @@ class Parse():
             elif statence[pos].type==2:
                 ans.append(int(statence[pos].token))
             elif statence[pos].type==3:
-                ans.append(RSStr(statence[pos].token))
+                ans.append(RSStr(json.loads(statence[pos].token)))
             else:
                 ans.append(statence[pos].token)
             pos+=1
@@ -525,20 +540,40 @@ def cal(x,stop,env,ast):
         print("error.empty ast.")
         exit(-1)
     elif x[0]=="printf":
-        if not isinstance(x[1],RSStr):
-            print("the first args of the printf is not a string.")
-            exit(-1)
         print_temp=cal(x[1],stop,env,ast)
         print_str=print_temp.val
+        if not isinstance(print_temp,RSStr):
+            print("the first args of the printf is not a string.")
+            exit(-1)
         print_args=[]
         for i in range(len(x))[2:]:
-            print_args.append(cal(x[i],stop,env,ast))
+            temp=cal(x[i],stop,env,ast)
+            if isinstance(temp,RSStr):
+                print_args.append(temp.val)
+            elif isinstance(temp,int):
+                print_args.append(temp)
+            else:
+                print("error.attemp to print unknown type.")
+                exit(-1)
         if len(print_args)>0:
             print(print_str %tuple(print_args),end="")
         else:
             print(print_str,end="")
     elif x[0]=="input":
-        return int(input())
+        if len(x)!=2:
+            print("error.the number of the args of the input must be 1.")
+            exit(-1)
+        second_op=cal(x[1],stop,env,ast)
+        if not isinstance(second_op,RSStr):
+            print("error.the arg must be string")
+            exit(-1)
+        if second_op.val=="num":
+            return int(input())
+        elif second_op.val=="str":
+            return RSStr(input())
+        else:
+            print("unknow type of the input.")
+            exit(-1)
     elif x[0]=="if":
         if len(x)==3:
             if cal(x[1],stop,env,ast)==True:
@@ -586,7 +621,7 @@ def cal(x,stop,env,ast):
         return None
     elif x[0]=="getmap":
         if(len(x)!=3):
-            print("error.the length of the args of the setmap function is not 2.")
+            print("error.the length of the args of the getmap function is not 2.")
             exit(-1)
         if env.get(x[1])==None:
             print("error.use the unknow variable.")
@@ -606,7 +641,7 @@ def cal(x,stop,env,ast):
         return env[x[1]][second_op]
     elif x[0]=="maplen":
         if(len(x)!=2):
-            print("error.the length of the args of the setmap function is not 1.")
+            print("error.the length of the args of the maplen function is not 1.")
             exit(-1)
         if env.get(x[1])==None:
             print("error.use the unknow variable.")
@@ -615,6 +650,47 @@ def cal(x,stop,env,ast):
             print("error.use the variable is not the map.")
             exit(-1)
         return len(env[x[1]])
+    elif x[0]=="inmap":
+        if(len(x)!=3):
+            print("error.the length of the args of the inmap function is not 2.")
+            exit(-1)
+        if env.get(x[1])==None:
+            print("error.use the unknow variable.")
+            exit(-1)
+        if not isinstance(env[x[1]],dict):
+            print("error.use the variable is not the map.")
+            exit(-1)
+        second_op_temp=cal(x[2],stop,env,ast)
+        second_op=0
+        if isinstance(second_op_temp,RSStr):
+            second_op=second_op_temp.val
+        elif isinstance(second_op_temp,int):
+            second_op=second_op_temp
+        else:
+            print("use hashable key,error.")
+            exit(-1)
+        return 1 if env[x[1]].get(second_op)!=None else 0
+    elif x[0]=="mapremove":
+        if(len(x)!=3):
+            print("error.the length of the args of the mapremove function is not 2.")
+            exit(-1)
+        if env.get(x[1])==None:
+            print("error.use the unknow variable.")
+            exit(-1)
+        if not isinstance(env[x[1]],dict):
+            print("error.use the variable is not the map.")
+            exit(-1)
+        second_op_temp=cal(x[2],stop,env,ast)
+        second_op=0
+        if isinstance(second_op_temp,RSStr):
+            second_op=second_op_temp.val
+        elif isinstance(second_op_temp,int):
+            second_op=second_op_temp
+        else:
+            print("use hashable key,error.")
+            exit(-1)
+        env[x[1]].pop(second_op)
+        return None
     elif x[0]=="func":
         if len(x)!=2:
             print("error.the length of the args of the func function is not 1")
@@ -629,6 +705,93 @@ def cal(x,stop,env,ast):
             print("error.attemp to get the undefine function object.")
             exit(-1)
         return ast[second_op_str]
+    elif x[0]=="strappend":
+        if len(x)!=3:
+            print("error.the length of the args of the strappend function is not 2.")
+            exit(-1)
+        first_op=cal(x[1],stop,env,ast)
+        second_op=cal(x[2],stop,env,ast)
+        if not isinstance(first_op,RSStr):
+            print("error.the first arg must be string.")
+            exit(-1)
+        if not isinstance(second_op,RSStr):
+            print("error.the second arg must be string.")
+            exit(-1)
+        return RSStr(first_op.val+second_op.val)
+    elif x[0]=="strindex":
+        if len(x)!=3:
+            print("error.the length of the args of the strindex function is not 2.")
+            exit(-1)
+        first_op=cal(x[1],stop,env,ast)
+        second_op=cal(x[2],stop,env,ast)
+        if not isinstance(first_op,RSStr):
+            print("error.the first arg must be string.")
+            exit(-1)
+        if not isinstance(second_op,int):
+            print("error.the second arg must be num.")
+            exit(-1)
+        t=first_op.val[second_op]
+        return RSStr(t)
+    elif x[0]=="strlen":
+        if len(x)!=2:
+            print("error.the length of the args of the strlen function is not 1.")
+            exit(-1)
+        first_op=cal(x[1],stop,env,ast)
+        if not isinstance(first_op,RSStr):
+            print("error.the first arg must be string.")
+            exit(-1)
+        return len(first_op.val)
+    elif x[0]=="ord":
+        if len(x)!=2:
+            print("error.the length of the args of the ord function is not 1.")
+            exit(-1)
+        first_op=cal(x[1],stop,env,ast)
+        if not isinstance(first_op,RSStr):
+            print("error.the first arg must be string.")
+            exit(-1)
+        return ord(first_op.val)
+    elif x[0]=="chr":
+        if len(x)!=2:
+            print("error.the length of the args of the chr function is not 1.")
+            exit(-1)
+        first_op=cal(x[1],stop,env,ast)
+        if not isinstance(first_op,int):
+            print("error.the first arg must be num.")
+            exit(-1)
+        return RSStr(chr(first_op))
+    elif x[0]=="str":
+        if len(x)!=2:
+            print("error.the length of the args of the str function is not 1.")
+            exit(-1)
+        first_op=cal(x[1],stop,env,ast)
+        if not isinstance(first_op,int):
+            print("error.the first arg must be num.")
+            exit(-1)
+        return RSStr(str(first_op))
+    elif x[0]=="num":
+        if len(x)!=2:
+            print("error.the length of the args of the num function is not 1.")
+            exit(-1)
+        first_op=cal(x[1],stop,env,ast)
+        if not isinstance(first_op,RSStr):
+            print("error.the first arg must be num.")
+            exit(-1)
+        return int(first_op.val)
+    elif x[0]=="type":
+        if len(x)!=2:
+            print("error.the length of the args of the type function is not 1.")
+            exit(-1)
+        first_op=cal(x[1],stop,env,ast)
+        if isinstance(first_op,RSStr):
+            return RSStr("str")
+        elif isinstance(first_op,int):
+            return RSStr("num")
+        elif isinstance(first_op,RSFunc):
+            return RSStr("function")
+        elif isinstance(first_op,dict):
+            return RSStr("map")
+        else:
+            return RSStr("unkown")
     elif x[0]=="*":
         first_op=cal(x[1],stop,env,ast)
         second_op=cal(x[2],stop,env,ast)
