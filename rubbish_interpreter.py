@@ -870,6 +870,9 @@ def cal(x,stop,env,ast):
         return None
     elif ast.get(x[0])!=None:
         function_call_env={}
+        if len(ast[x[0]].var)!=len(x)-1:
+            print("error.the number of the args is not equal the number of the function args.")
+            exit(-1)
         for i in range(len(ast[x[0]].var)):
             function_call_env[ast[x[0]].var[i]]=cal(x[i+1],stop,env,ast)
         return cal(ast[x[0]].code,[False],function_call_env,ast)
@@ -878,6 +881,9 @@ def cal(x,stop,env,ast):
             print("error.the attemp to call the unknow function.")
             exit(-1)
         function_call_env={}
+        if len(env[x[0]].var)!=len(x)-1:
+            print("error.the number of the args is not equal the number of the function args.")
+            exit(-1)
         for i in range(len(env[x[0]].var)):
             function_call_env[env[x[0]].var[i]]=cal(x[i+1],stop,env,ast)
         return cal(env[x[0]].code,[False],function_call_env,ast)
