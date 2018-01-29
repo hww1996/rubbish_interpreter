@@ -23,10 +23,20 @@
 | 函数名 |  用法 |返回值|
 | - | :-: |-:|
 |printf|`printf(format,...)`|无|
-|input|`变量=input()`|输入的整型数|
+|input|`变量=input(类型字符串)`|输入的类型字符串相等的类型|
 |setmap|`setmap(map变量，位置，值)`|无|
 |getmap|`getmap(map变量，位置)`|map这个位置的值|
 |maplen|`maplen(map变量)`|map的长度|
+|inmap|`inmap(map变量，位置)`|0为不在，1为在|
+|func|`func(函数名称的字符串)`|返回RSFunc对象，可以用来运行函数|
+|strappend|`strappend(目标字符串，想要添加的字符串)`|两个字符连接RSStr对象|
+|strindex|`strappend(目标字符串，位置)`|返回这个位置的字符|
+|strlen|`strappend(目标字符串)`|返回这个字符的长度|
+|ord|`ord(目标字符)`|返回这个字符的ASCII码的数|
+|chr|`chr(ASCII位置)`|返回这个ASCII码的数的字符|
+|str|`str(数字)`|将这个字符转为str类型|
+|num|`num(目标字符)`|将这个字符转为num类型|
+|type|`type(想要type的变量)`|返回这个想要type变量的类型|
 
 # 注意：
 1. 变量请先定义在使用
