@@ -934,5 +934,5 @@ if __name__=="__main__":
     if ast.get("main")==None:
         print("error.do not have the main function.")
         exit(-1)
-    exit_code=cal(ast["main"].code,[False],{},ast)
+    exit_code=cal(ast["main"].code,[False],RSEnv({}),ast)
     print("exit with code %d" %(exit_code))
