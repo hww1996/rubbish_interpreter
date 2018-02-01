@@ -1,0 +1,16 @@
+function printf_hello(){
+	i=0;
+	printf("i=%d\n",i);
+	if(i==0){
+		t=1;
+	}else{
+		t=2;
+	}
+	printf("t=%d\n",t);
+	return 0;
+}
+
+function main(){
+	printf_hello();
+	return 0;
+}

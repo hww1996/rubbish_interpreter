@@ -525,6 +525,42 @@ class Parse():
             return ans[0]
         return ans
 
+class RSEnv():
+    def __init__(self,env,outer=None):
+        self.env=env
+        self.outer=outer
+    def get(self,x):
+        if self.env.get(x)!=None:
+            return self.env.get(x)
+        if self.outer!=None:
+            return self.outer.get(x)
+        if self.outer==None:
+            return None
+    def __getitem__(self, item):
+        if self.env.get(item)!=None:
+            return self.env[item]
+        if self.outer!=None:
+            return self.outer[item]
+        if self.outer==None:
+            print("error.attemp to use undefine ")
+            exit(-1)
+    def __setitem__(self, key, value):
+        if self.env.get(key)!=None:
+            self.env[key]=value
+            return
+        temp=self.outer
+        while temp!=None:
+            if temp.env.get(key)!=None:
+                temp.env[key]=value
+                return
+            temp=temp.outer
+        self.env[key]=value
+    def __str__(self):
+        if self.outer==None:
+            return "now:[%s],outer:None" %(str(self.env))
+        return "now:[%s],outer:[%s]" %(str(self.env),str(self.outer))
+
+
 def cal(x,stop,env,ast):
     if isinstance(x,str):
         if x=="map":
@@ -532,7 +568,7 @@ def cal(x,stop,env,ast):
         elif env.get(x)!=None:
             return env[x]
         else:
-            print("use the unknown variable.")
+            print("error.use the unknown variable.")
             exit(-1)
     elif not isinstance(x,list):
         return x
@@ -577,15 +613,15 @@ def cal(x,stop,env,ast):
     elif x[0]=="if":
         if len(x)==3:
             if cal(x[1],stop,env,ast)==True:
-                return cal(x[2],stop,env,ast)
+                return cal(x[2],stop,RSEnv({},env),ast)
             return None
         if len(x)==4:
             if cal(x[1],stop,env,ast)==True:
-                return cal(x[2],stop,env,ast)
-            return cal(x[3],stop,env,ast)
+                return cal(x[2],stop,RSEnv({},env),ast)
+            return cal(x[3],stop,RSEnv({},env),ast)
     elif x[0]=="while":
         while cal(x[1],stop,env,ast)==True:
-            temp=cal(x[2],stop,env,ast)
+            temp=cal(x[2],stop,RSEnv({},env),ast)
             if stop[0]==True:
                 return temp
         return None
@@ -875,7 +911,7 @@ def cal(x,stop,env,ast):
             exit(-1)
         for i in range(len(ast[x[0]].var)):
             function_call_env[ast[x[0]].var[i]]=cal(x[i+1],stop,env,ast)
-        return cal(ast[x[0]].code,[False],function_call_env,ast)
+        return cal(ast[x[0]].code,[False],RSEnv(function_call_env),ast)
     elif env.get(x[0])!=None:
         if not isinstance(env[x[0]],RSFunc):
             print("error.the attemp to call the unknow function.")
@@ -886,9 +922,9 @@ def cal(x,stop,env,ast):
             exit(-1)
         for i in range(len(env[x[0]].var)):
             function_call_env[env[x[0]].var[i]]=cal(x[i+1],stop,env,ast)
-        return cal(env[x[0]].code,[False],function_call_env,ast)
+        return cal(env[x[0]].code,[False],RSEnv(function_call_env),ast)
     return None
-
+	
 if __name__=="__main__":
     if len(sys.argv)<2:
         print("usage:rubbish_interpreter <RubbishScript-file>")
