@@ -5,9 +5,20 @@ function fac(i){
 	return i*fac(i-1);
 }
 
+function fac2(i){
+	n=1;
+	j=1;
+	while(j<=i){
+		n=n*j;
+		j=j+1;
+	}
+	return n;
+}
+
 function main(){
 	printf("please input a number.\n");
 	a=input("num");
 	printf("(%d!)=%d.\n",a,fac(a));
+	printf("(%d!)=%d.\n",a,fac2(a));
 	return 0;
 }

@@ -9,7 +9,6 @@ function main(){
 	printf("after to number s:%s\n",type(s));
 	m=map;
 	printf("m type:%s\n",type(m));
-	printf("main function type:%s\n",type(func("main")));
 	printf("type type(s) is:%s\n",type(type(s)));
 	return 0;
 }

@@ -728,8 +728,8 @@ def cal(x,stop,env,ast):
         env[x[1]].pop(second_op)
         return None
     elif x[0]=="func":
-        if len(x)!=2:
-            print("error.the length of the args of the func function is not 1")
+        if len(x)<2:
+            print("error.the length of the args of the func function is at leat 1.")
         second_op=x[1]
         if isinstance(x[1],str):
             second_op=cal(x[1],stop,env,ast)
@@ -740,7 +740,10 @@ def cal(x,stop,env,ast):
         if ast.get(second_op_str)==None:
             print("error.attemp to get the undefine function object.")
             exit(-1)
-        return ast[second_op_str]
+        function_call_env={}
+        for i in range(len(ast[second_op_str].var)):
+            function_call_env[ast[second_op_str].var[i]]=cal(x[i+2],stop,env,ast)
+        return cal(ast[second_op_str].code,[False],RSEnv(function_call_env),ast)
     elif x[0]=="strappend":
         if len(x)!=3:
             print("error.the length of the args of the strappend function is not 2.")
@@ -912,17 +915,6 @@ def cal(x,stop,env,ast):
         for i in range(len(ast[x[0]].var)):
             function_call_env[ast[x[0]].var[i]]=cal(x[i+1],stop,env,ast)
         return cal(ast[x[0]].code,[False],RSEnv(function_call_env),ast)
-    elif env.get(x[0])!=None:
-        if not isinstance(env[x[0]],RSFunc):
-            print("error.the attemp to call the unknow function.")
-            exit(-1)
-        function_call_env={}
-        if len(env[x[0]].var)!=len(x)-1:
-            print("error.the number of the args is not equal the number of the function args.")
-            exit(-1)
-        for i in range(len(env[x[0]].var)):
-            function_call_env[env[x[0]].var[i]]=cal(x[i+1],stop,env,ast)
-        return cal(env[x[0]].code,[False],RSEnv(function_call_env),ast)
     return None
 	
 if __name__=="__main__":

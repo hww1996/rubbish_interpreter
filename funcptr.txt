@@ -9,16 +9,14 @@ function print_world(){
 }
 function print_hello_world(h,w){
 	printf("-------------\n");
-	h(2);
-	w();
+	func(h,2);
+	func(w);
 	return 0;
 }
 function main(){
-	h=func("print_hello");
-	h(1);
+	func("print_hello",1);
 	w_s="print_world";
-	w=func(w_s);
-	w();
-	print_hello_world(func("print_hello"),func(w_s));
+	func(w_s);
+	print_hello_world("print_hello",w_s);
 	return 0;
 }
