@@ -10,6 +10,13 @@
 
 内部放置的函数有printf,input,setmap,getmap,maplen,inmap,func,strappend,strindex,strlen,ord,chr,str,num,type。内置了hash map这个数据结构。
 ***
+### 类型
+| 类型名 |  具体类型作用 |
+| - | :-: |
+|RSStr|RubbishScript的字符类型|
+|number|RubbishScript的数字类型|
+|RSFunc|RubbishScript的函数类型|
+
 
 ### 语法
 | 作用 |  语法 |
@@ -28,7 +35,7 @@
 |getmap|`getmap(map变量，位置)`|map这个位置的值|
 |maplen|`maplen(map变量)`|map的长度|
 |inmap|`inmap(map变量，位置)`|0为不在，1为在|
-|func|`func(函数名称的字符串)`|返回RSFunc对象，可以用来运行函数|
+|func|`func(函数名称的字符串,...（函数参数）)`|调用名为这个字符串的函数，参数为字符后面的参数|
 |strappend|`strappend(目标字符串，想要添加的字符串)`|两个字符连接RSStr对象|
 |strindex|`strindex(目标字符串，位置)`|返回这个位置的字符|
 |strlen|`strlen(目标字符串)`|返回这个字符的长度|
@@ -43,3 +50,4 @@
 2. map是关键字，不可以作为变量使用
 3. 内置函数再定义是不起效果的
 4. 只能用Python3执行
+
