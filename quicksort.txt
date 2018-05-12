@@ -1,5 +1,6 @@
 function quicksort(m1,start,end){
 	i=start;
+	//quick sort
 	j=end;
 	if(i>=j){
 		return 0;
